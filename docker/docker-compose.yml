@@ -1,0 +1,78 @@
+# Cluster Weaviate com 3 nós (RAFT) + Prometheus + Grafana, usado por todos os notebooks.
+#   docker compose up -d
+#   Grafana: http://localhost:3000 (pasta "Weaviate")   Prometheus: http://localhost:9090
+# Portas padrão: weaviate-0 = :8080 / :50051 (os outros: :8081-8082 / :50052-50053).
+name: latinoware-cluster
+x-weaviate: &weaviate
+  image: cr.weaviate.io/semitechnologies/weaviate:${WEAVIATE_VERSION:-1.40.0}
+  command: ["--host", "0.0.0.0", "--port", "8080", "--scheme", "http"]
+  restart: on-failure
+  environment: &weaviate-env
+    AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
+    PERSISTENCE_DATA_PATH: /var/lib/weaviate
+    DEFAULT_VECTORIZER_MODULE: none
+    ENABLE_MODULES: text2vec-ollama,generative-ollama   # RAG local (slide "RAG 100% local")
+    ASYNC_INDEXING: "true"
+    ASYNC_REPLICATION_FREQUENCY: 5s
+    TRACK_VECTOR_DIMENSIONS: "true"
+    PROMETHEUS_MONITORING_ENABLED: "true"
+    CLUSTER_GOSSIP_BIND_PORT: "7100"
+    CLUSTER_DATA_BIND_PORT: "7101"
+    RAFT_BOOTSTRAP_EXPECTED: "3"
+    RAFT_JOIN: weaviate-0,weaviate-1,weaviate-2
+    CLUSTER_JOIN: weaviate-0:7100,weaviate-1:7100,weaviate-2:7100   # qualquer nó serve de porta de entrada
+    LOG_LEVEL: warning
+
+services:
+  weaviate-0:
+    <<: *weaviate
+    hostname: weaviate-0
+    ports: ["8080:8080", "50051:50051"]
+    volumes: ["weaviate-0:/var/lib/weaviate"]
+    networks: {weaviate: {ipv4_address: 172.31.10.10}}  # IP fixo: evita troca de IPs no restart
+    environment: {<<: *weaviate-env, CLUSTER_HOSTNAME: weaviate-0}
+  weaviate-1:
+    <<: *weaviate
+    hostname: weaviate-1
+    ports: ["8081:8080", "50052:50051"]
+    volumes: ["weaviate-1:/var/lib/weaviate"]
+    networks: {weaviate: {ipv4_address: 172.31.10.11}}  # IP fixo: evita troca de IPs no restart
+    environment: {<<: *weaviate-env, CLUSTER_HOSTNAME: weaviate-1}
+  weaviate-2:
+    <<: *weaviate
+    hostname: weaviate-2
+    ports: ["8082:8080", "50053:50051"]
+    volumes: ["weaviate-2:/var/lib/weaviate"]
+    networks: {weaviate: {ipv4_address: 172.31.10.12}}  # IP fixo: evita troca de IPs no restart
+    environment: {<<: *weaviate-env, CLUSTER_HOSTNAME: weaviate-2}
+
+  prometheus:
+    networks: [weaviate]
+    image: prom/prometheus:v3.5.0
+    volumes: ["./prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["9090:9090"]
+
+  # Dashboards: https://github.com/weaviate/grafana-dashboard-weaviate/pull/1 (branch revamp, 2a67269)
+  grafana:
+    networks: [weaviate]
+    image: grafana/grafana-oss:12.1.1
+    ports: ["3000:3000"]
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./grafana/provisioning/datasource.yml:/etc/grafana/provisioning/datasources/weaviate.yml:ro
+      - ./grafana/provisioning/dashboards.yml:/etc/grafana/provisioning/dashboards/weaviate.yml:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+
+networks:
+  weaviate:
+    ipam:
+      config: [{subnet: 172.31.10.0/24}]
+
+# Dados persistem entre restarts e mudanças de config (docker compose down -v apaga).
+volumes:
+  weaviate-0:
+  weaviate-1:
+  weaviate-2:

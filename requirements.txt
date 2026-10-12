@@ -1,0 +1,12 @@
+weaviate-client>=4.23.1
+sentence-transformers>=5.0
+torch>=2.5
+numpy
+pandas
+matplotlib
+pyarrow
+huggingface_hub
+requests
+pillow
+jupyterlab
+ipykernel

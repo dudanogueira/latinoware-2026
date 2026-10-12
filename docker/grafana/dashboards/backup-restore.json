@@ -1,0 +1,1188 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Backups and restores are one-off events: totals cover the selected time range, and bars show when they happened.",
+  "editable": true,
+  "graphTooltip": 1,
+  "links": [
+    {
+      "asDropdown": true,
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "weaviate"
+      ],
+      "title": "Weaviate dashboards",
+      "type": "dashboards"
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "panels": [],
+      "title": "In the selected time range",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Restores finished (every node takes part in a restore, so this is the highest count on any node).",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "round(max(clamp_min(sum by (instance) (backup_restore_ms_count{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\", class_name=~\"$collection\"}) - (sum by (instance) (backup_restore_ms_count{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\", class_name=~\"$collection\"} offset $__range) or sum by (instance) (backup_restore_ms_count{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\", class_name=~\"$collection\"}) * 0), 0)))",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Restores",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Despite the `_ms` suffix this metric is recorded with prometheus.NewTimer, i.e. in seconds (weaviate up to v1.39.5), and is shown in seconds here.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "clamp_min(sum (backup_restore_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\", class_name=~\"$collection\"}) - (sum (backup_restore_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\", class_name=~\"$collection\"} offset $__range) or sum (backup_restore_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\", class_name=~\"$collection\"}) * 0), 0)",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Time restoring",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Bytes written to the backup backend by all nodes.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "clamp_min(sum (backup_store_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) - (sum (backup_store_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"} offset $__range) or sum (backup_store_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) * 0), 0)",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Uploaded",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Bytes read from the backup backend by all nodes.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "clamp_min(sum (backup_restore_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) - (sum (backup_restore_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"} offset $__range) or sum (backup_restore_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) * 0), 0)",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Downloaded",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "LSM buckets paused (flushed and frozen) so their files could be copied into a backup.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "round(clamp_min(sum (bucket_pause_durations_ms_count{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) - (sum (bucket_pause_durations_ms_count{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"} offset $__range) or sum (bucket_pause_durations_ms_count{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) * 0), 0))",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Buckets paused",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Sum of prepare, object storage download and schema apply, across nodes.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "clamp_min(sum (weaviate_restore_phase_duration_seconds_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) - (sum (weaviate_restore_phase_duration_seconds_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"} offset $__range) or sum (weaviate_restore_phase_duration_seconds_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) * 0), 0)",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Time in restore phases",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 8,
+      "panels": [],
+      "title": "When it happened",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "On this metric `class_name` is always the literal \"class\" and `backend_name` is the module name (weaviate up to v1.39.5), so it cannot be split by collection.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 6
+      },
+      "id": 9,
+      "interval": "1m",
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "clamp_min(sum (backup_store_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) - (sum (backup_store_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"} offset $__interval) or sum (backup_store_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) * 0), 0)",
+          "legendFormat": "uploaded (backup)",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "clamp_min(sum (backup_restore_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) - (sum (backup_restore_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"} offset $__interval) or sum (backup_restore_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) * 0), 0)",
+          "legendFormat": "downloaded (restore)",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Bytes transferred",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 6
+      },
+      "id": 10,
+      "interval": "1m",
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "clamp_min(sum by (instance) (backup_store_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) - (sum by (instance) (backup_store_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"} offset $__interval) or sum by (instance) (backup_store_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) * 0), 0)",
+          "legendFormat": "up {{instance}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "clamp_min(sum by (instance) (backup_restore_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) - (sum by (instance) (backup_restore_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"} offset $__interval) or sum by (instance) (backup_restore_data_transferred{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) * 0), 0)",
+          "legendFormat": "down {{instance}}",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Bytes transferred by node",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Time spent in each restore phase (prepare, object_storage_download, schema_apply), summed over nodes.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 14
+      },
+      "id": 11,
+      "interval": "1m",
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "clamp_min(sum by (phase) (weaviate_restore_phase_duration_seconds_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) - (sum by (phase) (weaviate_restore_phase_duration_seconds_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"} offset $__interval) or sum by (phase) (weaviate_restore_phase_duration_seconds_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) * 0), 0)",
+          "legendFormat": "{{phase}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Restore phase duration",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Despite the `_ms` suffix this metric is recorded with prometheus.NewTimer, i.e. in seconds (weaviate up to v1.39.5), and is shown in seconds here.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 14
+      },
+      "id": 12,
+      "interval": "1m",
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "clamp_min(sum (backup_restore_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\", class_name=~\"$collection\"}) - (sum (backup_restore_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\", class_name=~\"$collection\"} offset $__interval) or sum (backup_restore_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\", class_name=~\"$collection\"}) * 0), 0)",
+          "legendFormat": "restore",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "clamp_min(sum by (class_name) (backup_restore_class_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\", class_name=~\"$collection\"}) - (sum by (class_name) (backup_restore_class_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\", class_name=~\"$collection\"} offset $__interval) or sum by (class_name) (backup_restore_class_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\", class_name=~\"$collection\"}) * 0), 0)",
+          "legendFormat": "collection {{class_name}}",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Restore duration",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Despite the `_ms` suffix this metric is recorded with prometheus.NewTimer, i.e. in seconds (weaviate up to v1.39.5), and is shown in seconds here. Not emitted by the coordinated backup path in v1.39.5, so usually empty.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 22
+      },
+      "id": 13,
+      "interval": "1m",
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "clamp_min(sum (backup_store_to_backend_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\", class_name=~\"$collection\"}) - (sum (backup_store_to_backend_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\", class_name=~\"$collection\"} offset $__interval) or sum (backup_store_to_backend_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\", class_name=~\"$collection\"}) * 0), 0)",
+          "legendFormat": "upload",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Upload to backend",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Despite the `_ms` suffix this metric is recorded with prometheus.NewTimer, i.e. in seconds (weaviate up to v1.39.5), and is shown in seconds here.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 22
+      },
+      "id": 14,
+      "interval": "1m",
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "clamp_min(sum by (instance) (bucket_pause_durations_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) - (sum by (instance) (bucket_pause_durations_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"} offset $__interval) or sum by (instance) (bucket_pause_durations_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}) * 0), 0)",
+          "legendFormat": "{{instance}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Bucket pause time",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
+      "id": 15,
+      "panels": [],
+      "title": "Incremental backups (dedupe)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "`backup_dedupe_shards_total` (counter). Shards planned by replica-dedupe backups, by outcome (designated = archived once, fallback = archived by every replica) **May be empty:** Available from Weaviate v1.40 (BACKUP_DEDUPE_ENABLED=true and a backup created with dedupeReplicas); empty on earlier versions.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 31
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (outcome) (rate(backup_dedupe_shards_total{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}[$__rate_interval]))",
+          "legendFormat": "{{outcome}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Shards by dedupe outcome /s",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "`backup_dedupe_fallback_total` (counter). Replica-dedupe fallbacks by reason **May be empty:** Available from Weaviate v1.40 (BACKUP_DEDUPE_ENABLED=true and a backup created with dedupeReplicas); empty on earlier versions.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 31
+      },
+      "id": 17,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (reason) (rate(backup_dedupe_fallback_total{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}[$__rate_interval]))",
+          "legendFormat": "{{reason}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Dedupe fallbacks /s",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "`backup_dedupe_restore_anomalies_total` (counter). Fan-out restore shards without a normal source, by reason (no_holder = nothing restored, multi_holder = deterministic pick among duplicates, schema_source_fallback = shard membership derived from local snapshots) **May be empty:** Available from Weaviate v1.40 (BACKUP_DEDUPE_ENABLED=true and a backup created with dedupeReplicas); empty on earlier versions.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 31
+      },
+      "id": 18,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (reason) (rate(backup_dedupe_restore_anomalies_total{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}[$__rate_interval]))",
+          "legendFormat": "{{reason}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Restore anomalies /s",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "`backup_dedupe_planning_ms` (summary). Wall time of replica-dedupe convergence planning per backup **May be empty:** Available from Weaviate v1.40 (BACKUP_DEDUPE_ENABLED=true and a backup created with dedupeReplicas); empty on earlier versions.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 39
+      },
+      "id": 19,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "label_replace(label_replace(sum by (instance, pod) (rate(backup_dedupe_planning_ms_sum{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}[$__rate_interval])) / sum by (instance, pod) (rate(backup_dedupe_planning_ms_count{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}[$__rate_interval])), \"node\", \"$1\", \"instance\", \"(.*)\"), \"node\", \"$1\", \"pod\", \"(.+)\")",
+          "legendFormat": "mean {{node}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Dedupe planning (mean)",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": [
+    "weaviate"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "hide": 0,
+        "label": "Data source",
+        "name": "datasource",
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "type": "datasource"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "includeAll": true,
+        "label": "Job",
+        "multi": true,
+        "name": "job",
+        "query": {
+          "query": "label_values(weaviate_build_info, job)",
+          "refId": "v"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "description": "Kubernetes namespace. Empty outside Kubernetes; leave on All.",
+        "includeAll": true,
+        "label": "Namespace",
+        "multi": true,
+        "name": "namespace",
+        "query": {
+          "query": "label_values(weaviate_build_info{job=~\"$job\"}, namespace)",
+          "refId": "v"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "description": "A Weaviate instance: shown by pod name in Kubernetes, host:port elsewhere.",
+        "includeAll": true,
+        "label": "Weaviate node",
+        "multi": true,
+        "name": "node",
+        "query": {
+          "query": "query_result(weaviate_build_info{job=~\"$job\", namespace=~\"$namespace\"})",
+          "refId": "v"
+        },
+        "refresh": 2,
+        "regex": "/instance=\"(?<value>[^\"]+)\"(?:.*pod=\"(?<text>[^\"]+)\")?/",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "includeAll": true,
+        "label": "Collection",
+        "multi": true,
+        "name": "collection",
+        "query": {
+          "query": "label_values(object_count{job=~\"$job\", namespace=~\"$namespace\", instance=~\"$node\"}, class_name)",
+          "refId": "v"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timezone": "browser",
+  "title": "Weaviate / Backup & Restore",
+  "uid": "juk0lQZ4z",
+  "version": 1
+}

@@ -1,0 +1,6 @@
+global:
+  scrape_interval: 5s
+scrape_configs:
+  - job_name: weaviate
+    static_configs:
+      - targets: ["weaviate-0:2112", "weaviate-1:2112", "weaviate-2:2112"]

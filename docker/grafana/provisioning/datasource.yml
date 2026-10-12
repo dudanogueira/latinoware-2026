@@ -1,0 +1,10 @@
+# Same uid as kube-prometheus-stack's default datasource, so the dashboards behave identically
+# in this compose setup and in Kubernetes. Dashboards select it through the $datasource variable.
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    uid: prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true

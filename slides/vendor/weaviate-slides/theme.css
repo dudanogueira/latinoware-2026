@@ -1,0 +1,1046 @@
+/* Weaviate Slide Theme — vanilla CSS, no preprocessor needed */
+
+/* Fonts: Plus Jakarta Sans (headings) + Inter (body) via Google Fonts CDN.
+   Pattern: Headings = Plus Jakarta Sans, Body = Inter.
+   Menlo = native monospace for code blocks. */
+
+/* ── Brand tokens ─────────────────────────────────────────── */
+:root {
+  --w-navy:        #130c49;
+  --w-navy-light:  #262262;
+  --w-green:       #61bd73;
+  --w-white:       #f7f9fd;
+  --w-gray:        #b9c8de;
+  --w-light-bg:    #ecf4f8;
+  --w-teal:        #7ac7c0;
+  --w-lime:        #bcf0a7;
+  --w-cyan:        #7ad6eb;
+  --w-purple:      #a590dd;
+  --w-red:         #f4404e;
+  --w-yellow:      #f9f15d;
+
+  --font-heading: 'Plus Jakarta Sans', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-code:    'Menlo', 'Monaco', 'Consolas', monospace;
+}
+
+/* ── Reset & base ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Viewport (1920×1080 scaled to fit) ───────────────────── */
+#viewport {
+  width: 1920px;
+  height: 1080px;
+  position: absolute;
+  top: 0; left: 0;
+  transform-origin: top left;
+}
+
+/* ── Slide base ───────────────────────────────────────────── */
+.slide {
+  width: 1920px;
+  height: 1080px;
+  position: absolute;
+  top: 0; left: 0;
+  padding: 60px 80px;
+  font-size: 40px;
+  line-height: 1.5;
+  color: #fff;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.slide.active {
+  display: flex;
+}
+
+/* ── Weaviate "W" logo (top-right on every slide) ────────── */
+/* Uses official Weaviate W icon SVGs: green for dark, navy for light */
+.slide::after {
+  content: '';
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  width: 52px;
+  height: 33px;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2248%22%20height%3D%2230%22%20fill%3D%22none%22%20viewBox%3D%220%200%2048%2030%22%3E%3Cpath%20fill%3D%22%2361bd73%22%20d%3D%22M46%204.97%2038.04.41a3%203%200%200%200-3.01%200%202.9%202.9%200%200%200-1.51%202.57v9.82l-4.14-2.36a10.9%2010.9%200%200%200-10.79.01l-4.1%202.35V2.98A3.02%203.02%200%200%200%209.96.41L2%204.97C.77%205.68%200%207%200%208.4v10.84a5.4%205.4%200%200%200%202.55%204.59l7.25%204.56a6.46%206.46%200%200%200%207.25-.28l5.04-3.76a3.4%203.4%200%200%201%203.82%200l5.03%203.75a6.5%206.5%200%200%200%207.26.29l7.25-4.57A5.4%205.4%200%200%200%2048%2019.33V8.4c0-1.4-.76-2.72-2-3.42m-32.85%2022.4a4.3%204.3%200%200%201-2.24-.64l-7.27-4.58a3.4%203.4%200%200%201-1.62-2.9V8.4c0-.7.38-1.35%201-1.7l7.95-4.56a1%201%200%200%201%201%200c.15.08.5.33.5.85v22.5q0%201.07.68%201.89m3.02-1.1-.03.02a1.03%201.03%200%200%201-1.65-.81v-3.32l6.27-3.95a6.1%206.1%200%200%201%206.5%200l6.27%203.95v3.32c0%20.63-.53%201.01-1.03%201.01-.22%200-.47-.08-.65-.22l-4.72-3.51a5.5%205.5%200%200%200-6.25%200zm12.19-9.74a8.2%208.2%200%200%200-8.7%200l-5.18%203.27v-4.7l5.12-2.92.02-.01a8.9%208.9%200%200%201%208.75%200l5.15%202.92v4.7zm15.74%205.78-6.99%204.4q-1.02.64-2.24.66c.44-.53.68-1.19.68-1.89l-.02-10.96V2.98c0-.5.35-.76.5-.85a1%201%200%200%201%201%200l7.95%204.57c.61.35%201%201%201%201.7v10.87a3.4%203.4%200%200%201-1.62%202.87z%22%2F%3E%3C%2Fsvg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Navy W for light slides */
+.slide.light::after,
+.slide.slide-text::after {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2248%22%20height%3D%2230%22%20fill%3D%22none%22%20viewBox%3D%220%200%2048%2030%22%3E%3Cpath%20fill%3D%22%23130c49%22%20d%3D%22M46%204.97%2038.04.41a3%203%200%200%200-3.01%200%202.9%202.9%200%200%200-1.51%202.57v9.82l-4.14-2.36a10.9%2010.9%200%200%200-10.79.01l-4.1%202.35V2.98A3.02%203.02%200%200%200%209.96.41L2%204.97C.77%205.68%200%207%200%208.4v10.84a5.4%205.4%200%200%200%202.55%204.59l7.25%204.56a6.46%206.46%200%200%200%207.25-.28l5.04-3.76a3.4%203.4%200%200%201%203.82%200l5.03%203.75a6.5%206.5%200%200%200%207.26.29l7.25-4.57A5.4%205.4%200%200%200%2048%2019.33V8.4c0-1.4-.76-2.72-2-3.42m-32.85%2022.4a4.3%204.3%200%200%201-2.24-.64l-7.27-4.58a3.4%203.4%200%200%201-1.62-2.9V8.4c0-.7.38-1.35%201-1.7l7.95-4.56a1%201%200%200%201%201%200c.15.08.5.33.5.85v22.5q0%201.07.68%201.89m3.02-1.1-.03.02a1.03%201.03%200%200%201-1.65-.81v-3.32l6.27-3.95a6.1%206.1%200%200%201%206.5%200l6.27%203.95v3.32c0%20.63-.53%201.01-1.03%201.01-.22%200-.47-.08-.65-.22l-4.72-3.51a5.5%205.5%200%200%200-6.25%200zm12.19-9.74a8.2%208.2%200%200%200-8.7%200l-5.18%203.27v-4.7l5.12-2.92.02-.01a8.9%208.9%200%200%201%208.75%200l5.15%202.92v4.7zm15.74%205.78-6.99%204.4q-1.02.64-2.24.66c.44-.53.68-1.19.68-1.89l-.02-10.96V2.98c0-.5.35-.76.5-.85a1%201%200%200%201%201%200l7.95%204.57c.61.35%201%201%201%201.7v10.87a3.4%203.4%200%200%201-1.62%202.87z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+/* Title slide: hide the W watermark (has full logo instead) */
+.slide-title::after {
+  display: none;
+}
+
+/* ── Background: Dark (default) ───────────────────────────── */
+.slide.dark, .slide-dark {
+  background:
+    radial-gradient(58% 86% at 118% 74%, rgba(122,214,235,0.22), transparent 56%),
+    radial-gradient(40% 46% at 79% 92%, rgba(97,189,115,0.60), transparent 48%),
+    radial-gradient(42% 34% at 94% 96%, rgba(122,214,235,0.38), transparent 46%),
+    radial-gradient(16% 24% at 18% 10%, rgba(38,34,98,0.18), transparent 62%),
+    linear-gradient(180deg, #130c49, #130c49);
+  color: #fff;
+}
+
+/* ── Background: Light ────────────────────────────────────── */
+.slide.light, .slide-light {
+  background:
+    radial-gradient(48% 62% at 13% 31%, rgba(110,247,222,0.46), transparent 71%),
+    radial-gradient(38% 46% at 30% 60%, rgba(82,231,255,0.24), transparent 69%),
+    radial-gradient(44% 54% at 55% 71%, rgba(160,244,62,0.70), transparent 62%),
+    radial-gradient(46% 52% at 79% 65%, rgba(61,229,255,0.56), transparent 66%),
+    radial-gradient(34% 44% at 74% 22%, rgba(158,235,255,0.30), transparent 72%),
+    linear-gradient(180deg, #eceff3, #e8edf2);
+  color: var(--w-navy);
+}
+
+/* ── Background: Dark vibrant (quotes) ────────────────────── */
+.slide.dark-vibrant, .slide-dark-vibrant {
+  background:
+    radial-gradient(30% 38% at 7% 10%, rgba(92,255,66,0.48), transparent 68%),
+    radial-gradient(44% 58% at 18% 30%, rgba(32,237,255,0.34), transparent 68%),
+    radial-gradient(36% 44% at 56% 63%, rgba(104,255,35,0.56), transparent 63%),
+    radial-gradient(34% 44% at 84% 77%, rgba(29,234,255,0.34), transparent 66%),
+    radial-gradient(22% 26% at 91% 5%, rgba(182,118,255,0.48), transparent 58%),
+    linear-gradient(180deg, #0a1761, #071257);
+  color: #fff;
+}
+
+/* ── Typography ───────────────────────────────────────────── */
+.slide h1, .slide h2, .slide h3, .slide h4 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 0.6em;
+}
+.slide h1 { font-size: 2.2em; }
+.slide h2 { font-size: 1.6em; }
+.slide h3 { font-size: 1.3em; }
+
+.slide p { margin-bottom: 0.5em; }
+
+.slide strong {
+  font-weight: 600;
+  color: var(--w-green);
+}
+.slide.light strong {
+  color: var(--w-navy);
+  font-weight: 700;
+}
+
+.slide a {
+  color: var(--w-green);
+  text-decoration: underline;
+  text-decoration-color: rgba(97,189,115,0.4);
+  text-underline-offset: 3px;
+}
+
+.slide .green { color: var(--w-green); }
+
+/* ── Lists ────────────────────────────────────────────────── */
+.slide ul, .slide ol {
+  margin-left: 0;
+  padding-left: 1.2em;
+  margin-bottom: 0.5em;
+}
+.slide li { margin-bottom: 0.5em; }
+.slide ul li::marker { color: var(--w-green); }
+.slide.light ul li::marker { color: var(--w-navy); }
+
+/* ── Inline code ──────────────────────────────────────────── */
+.slide code {
+  font-family: var(--font-code);
+  font-size: 0.85em;
+  background: var(--w-navy-light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+}
+.slide.light code {
+  background: rgba(19,12,73,0.08);
+  color: var(--w-navy);
+}
+
+/* ── Carbon-style code window ────────────────────────────── */
+.carbon-window {
+  width: 100%;
+  background: #171023;
+  border-radius: 12px;
+  box-shadow: 0 20px 68px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+.carbon-titlebar {
+  display: flex;
+  align-items: center;
+  padding: 14px 18px;
+  background: rgba(0,0,0,0.15);
+}
+.carbon-dots {
+  display: flex;
+  gap: 8px;
+}
+.carbon-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+}
+.carbon-dot.red    { background: #ff5f57; }
+.carbon-dot.yellow { background: #febc2e; }
+.carbon-dot.green  { background: #28c840; }
+.carbon-title {
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.35em;
+  color: rgba(255,255,255,0.4);
+  margin-right: 39px; /* balance the dots width to center text */
+}
+
+.carbon-window pre {
+  width: 100%;
+  margin: 0;
+  font-size: 0.55em;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow-x: auto;
+}
+.carbon-window pre code {
+  display: block;
+  background: transparent;
+  padding: 8px 28px 28px;
+  line-height: 1.65;
+  font-size: 1em;
+  font-family: 'Hack', var(--font-code);
+  color: #abb2bf;
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.02em;
+}
+
+/* Auto-shrink font for long code blocks (>15 lines) */
+.carbon-window pre code.carbon-compact {
+  font-size: 0.88em;
+  line-height: 1.5;
+  padding: 4px 24px 20px;
+}
+
+/* Ensure carbon window fills available space and scrolls if needed */
+.slide-content .carbon-window {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.slide-content .carbon-window pre {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Light slide: same carbon window style (always dark code) */
+.slide.light .carbon-window {
+  background: #171023;
+}
+.slide.light .carbon-window pre code {
+  color: #abb2bf;
+}
+
+/* ── Syntax highlighting — One Dark Pro (vibrant) ────────── */
+
+/* Keywords: if, else, return, import, from, def, func, class, const, let, var */
+.hljs-keyword,
+.hljs-selector-tag { color: #c678dd; font-weight: 500; }
+
+/* Strings and template literals */
+.hljs-string,
+.hljs-template-variable,
+.hljs-addition { color: #98c379; }
+
+/* Comments */
+.hljs-comment,
+.hljs-quote { color: #7f848e; font-style: italic; }
+
+/* Functions and method names */
+.hljs-title,
+.hljs-title.function_ { color: #61afef; }
+
+/* Numbers, booleans, constants (True, False, None, nil) */
+.hljs-number { color: #d19a66; }
+.hljs-literal { color: #d19a66; font-weight: 500; }
+
+/* Built-in functions (print, len, range, append, make) */
+.hljs-built_in { color: #e5c07b; }
+
+/* Types and class names */
+.hljs-type,
+.hljs-title.class_ { color: #e5c07b; font-weight: 500; }
+
+/* Variables, params, keyword arguments */
+.hljs-attr,
+.hljs-variable,
+.hljs-params { color: #e06c75; }
+
+/* Operators and punctuation */
+.hljs-operator { color: #56b6c2; }
+.hljs-punctuation { color: #abb2bf; }
+
+/* Property access (object.property) */
+.hljs-property { color: #e06c75; }
+
+/* Meta / decorators / preprocessor */
+.hljs-meta { color: #e06c75; }
+.hljs-meta .hljs-keyword { color: #61afef; }
+.hljs-meta .hljs-string { color: #98c379; }
+
+/* Symbols and regex */
+.hljs-symbol,
+.hljs-regexp { color: #56b6c2; }
+
+/* Tags (HTML/XML) */
+.hljs-tag { color: #abb2bf; }
+.hljs-name { color: #e06c75; }
+.hljs-tag .hljs-attr { color: #d19a66; }
+
+/* Deletion / addition (diff) */
+.hljs-deletion { color: #e06c75; background: rgba(224,108,117,0.1); }
+.hljs-addition { color: #98c379; background: rgba(152,195,121,0.1); }
+
+/* Section headers */
+.hljs-section { color: #61afef; font-weight: bold; }
+
+/* Emphasis */
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: bold; }
+
+/* Subst (f-string expressions like {var}) */
+.hljs-subst { color: #e06c75; font-weight: 400; }
+
+/* Selector (CSS) */
+.hljs-selector-class { color: #e5c07b; }
+.hljs-selector-id { color: #61afef; }
+
+/* Ensure nested tokens inside strings keep string color unless overridden */
+.hljs-string .hljs-subst { color: #e06c75; }
+
+/* ── Title slide (ref: page-01) ───────────────────────────── */
+.slide-title {
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  padding: 56px 120px 72px 120px;
+  /* Bokeh-style background matching ref page-01
+     1. Large blue-purple cloud covering right half
+     2. Teal bokeh circle at ~80%,68%
+     3. Bright cyan bokeh at ~92%,80%
+     4. Green-teal accent at ~95%,90%
+     5. Subtle indigo glow at top center */
+  background:
+    radial-gradient(circle at 48% 5%, rgba(55,55,130,0.13) 0%, transparent 16%),
+    radial-gradient(ellipse 900px 750px at 78% 48%, rgba(55,75,180,0.35) 0%, transparent 100%),
+    radial-gradient(circle 350px at 80% 68%, rgba(30,160,175,0.50) 0%, transparent 100%),
+    radial-gradient(circle 280px at 92% 82%, rgba(40,200,195,0.50) 0%, transparent 100%),
+    radial-gradient(circle 200px at 96% 92%, rgba(50,190,140,0.45) 0%, transparent 100%),
+    linear-gradient(180deg, #130c49 0%, #120f4c 100%) !important;
+}
+.slide-title .weaviate-logo {
+  flex-shrink: 0;
+}
+.slide-title .weaviate-logo svg {
+  width: 280px;
+  height: auto;
+}
+/* Title sits ~28% down from top (ref: page-01) */
+.slide-title h1 {
+  margin-top: 140px;
+  font-size: 3.2em;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 0;
+}
+/* greenWord drops to its own line, Normal weight (ref: "Template" on page-01) */
+.slide-title h1 .green {
+  display: block;
+  font-weight: 400;
+}
+.slide-title .subtitle {
+  font-family: var(--font-heading);
+  font-size: 0.7em;
+  color: #fff;
+  font-weight: 700;
+  margin-top: 2em;
+  margin-bottom: 0;
+}
+.slide-title .meta {
+  font-family: var(--font-body);
+  margin-top: 0.3em;
+  font-size: 0.65em;
+  font-weight: 400;
+  color: rgba(255,255,255,0.7);
+}
+
+/* ── Section slide (ref: page-11) ─────────────────────────── */
+.slide-section {
+  justify-content: flex-end !important;
+  padding-bottom: 180px;
+  /* Plain dark navy, no gradient glow */
+  background: var(--w-navy) !important;
+}
+.slide-section h2 {
+  font-size: 2.8em;
+  font-weight: 700;
+  color: var(--w-green);
+}
+.slide-section .subtitle {
+  font-size: 1.3em;
+  color: rgba(255,255,255,0.85);
+}
+
+/* ── Quote slide (ref: page-37 vibrant, page-38 light) ───── */
+.slide-quote {
+  justify-content: center !important;
+  padding-left: 120px;
+  padding-right: 120px;
+  position: relative;
+}
+.slide-quote::before {
+  content: '\201C';
+  position: absolute;
+  top: 40px;
+  left: 80px;
+  font-family: var(--font-heading);
+  font-size: 8em;
+  font-weight: 800;
+  color: #fff;
+  opacity: 0.5;
+  line-height: 1;
+  pointer-events: none;
+}
+.slide-quote .quote-text {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.6em;
+  line-height: 1.4;
+  margin: 0;
+}
+.slide-quote .attribution {
+  font-family: var(--font-heading);
+  font-size: 1em;
+  font-weight: 400;
+  color: rgba(255,255,255,0.7);
+  margin-top: 1.2em;
+}
+.slide-quote.light .quote-text { color: var(--w-navy); }
+.slide-quote.light .attribution { color: rgba(19,12,73,0.6); }
+.slide-quote.light::before { color: var(--w-navy); }
+
+/* ── Thank-you slide (ref: page-81) ──────────────────────── */
+.slide-thankyou {
+  justify-content: center !important;
+  align-items: flex-start !important;
+  padding-left: 100px;
+  padding-right: 100px;
+}
+.slide-thankyou h2 {
+  font-family: var(--font-heading);
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.8em;
+}
+.slide-thankyou .thankyou-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+}
+.slide-thankyou .thankyou-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: var(--font-body);
+  font-size: 1em;
+  font-weight: 400;
+  color: #fff;
+}
+.slide-thankyou .thankyou-link .link-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--w-green);
+  color: var(--w-green);
+  font-size: 0.6em;
+  flex-shrink: 0;
+}
+.slide-thankyou p {
+  font-family: var(--font-body);
+  font-size: 1.1em;
+  font-weight: 400;
+  color: rgba(255,255,255,0.85);
+}
+
+/* ── Content slide (ref: page-65 dark, page-28 light) ─────── */
+.slide-content {
+  padding-top: 60px;
+}
+.slide-content.dark {
+  align-items: center !important;
+  text-align: center;
+}
+.slide-content h2 {
+  margin-bottom: 0.8em;
+}
+/* Light content slides use thinner heading weight (ref: page-28) */
+.slide-content.light h2 {
+  font-weight: 400;
+}
+/* Dark content slides: heading is Plus Jakarta Sans Bold */
+.slide-content.dark h2 {
+  font-weight: 700;
+}
+
+/* ── Cards (ref: page-65) ─────────────────────────────────── */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2em;
+  width: 100%;
+  text-align: left;
+}
+
+.card {
+  padding: 1.4em 1.8em;
+  border-radius: 18px;
+  background: rgba(38,34,98,0.55);
+  border: 1px solid rgba(255,255,255,0.08);
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 0.85em;
+}
+.card .card-title {
+  font-family: var(--font-heading);
+  font-size: 1.35em;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.3em;
+}
+
+/* Cards on light slides */
+.slide.light .card {
+  background: #ffffff;
+  border: 1px solid rgba(19,12,73,0.08);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.slide.light .card .card-title {
+  color: var(--w-navy);
+}
+
+/* ── Stats ────────────────────────────────────────────────── */
+.stat-value {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 3em;
+  color: var(--w-green);
+  line-height: 1.1;
+}
+.stat-label {
+  font-family: var(--font-body);
+  font-size: 0.9em;
+  font-weight: 400;
+  color: rgba(255,255,255,0.7);
+  margin-top: 0.3em;
+}
+.slide.light .stat-label {
+  color: rgba(19,12,73,0.6);
+}
+
+/* ── Badge ────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6em;
+  height: 1.6em;
+  background: var(--w-navy);
+  color: var(--w-green);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.9em;
+  border-radius: 6px;
+  margin-right: 0.5em;
+  flex-shrink: 0;
+}
+
+/* ── Badge items (agenda-style layout, ref: page-28) ──────── */
+.badge-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.2em 4em;
+  width: 100%;
+}
+
+.badge-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 0.6em;
+  row-gap: 0.2em;
+  align-items: start;
+}
+
+.badge-item .badge {
+  grid-row: 1;
+  grid-column: 1;
+  width: 48px;
+  height: 48px;
+  font-size: 1em;
+  border-radius: 8px;
+  align-self: center;
+}
+
+.badge-item .badge-item-title {
+  grid-row: 1;
+  grid-column: 2;
+  font-family: var(--font-heading);
+  font-size: 1.15em;
+  font-weight: 700;
+  color: var(--w-navy);
+  align-self: center;
+}
+
+.badge-item .badge-item-desc {
+  grid-row: 2;
+  grid-column: 2;
+  font-family: var(--font-body);
+  font-size: 0.75em;
+  font-weight: 400;
+  color: rgba(19,12,73,0.6);
+  line-height: 1.4;
+}
+
+/* Dark slide badge items */
+.slide.dark .badge-item .badge-item-title {
+  color: #fff;
+}
+.slide.dark .badge-item .badge-item-desc {
+  color: rgba(255,255,255,0.6);
+}
+
+/* ── Columns ──────────────────────────────────────────────── */
+.columns {
+  display: flex;
+  gap: 2em;
+  width: 100%;
+}
+.column {
+  flex: 1;
+}
+
+/* ── Fragments ────────────────────────────────────────────── */
+.fragment {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.fragment.visible {
+  opacity: 1;
+}
+
+/* ── Tables ────────────────────────────────────────────────── */
+.slide table {
+  margin: 1em 0;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.85em;
+}
+.slide th {
+  background: var(--w-navy-light);
+  color: var(--w-green);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  padding: 0.6em 1em;
+  border-bottom: 2px solid var(--w-green);
+  border-left: 3px solid var(--w-green);
+  text-align: left;
+}
+.slide td {
+  padding: 0.5em 1em;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.slide.light th {
+  background: #ffffff;
+  color: var(--w-navy);
+  border-bottom-color: rgba(19,12,73,0.15);
+  border-left: 3px solid var(--w-green);
+}
+.slide.light td {
+  background: #ffffff;
+  border-bottom-color: rgba(19,12,73,0.1);
+}
+
+/* ── Images ───────────────────────────────────────────────── */
+.slide img {
+  border-radius: 8px;
+  max-height: 60%;
+}
+
+/* ── Slide counter & progress ─────────────────────────────── */
+.slide-counter {
+  position: fixed;
+  bottom: 16px;
+  right: 24px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+  z-index: 100;
+  pointer-events: none;
+}
+
+.progress-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: var(--w-green);
+  transition: width 0.3s ease;
+  z-index: 100;
+}
+
+/* ── Text slide (60/40 split with decorative art, ref: page-03) ── */
+.slide-text {
+  padding: 0;
+}
+.slide-text .text-frame {
+  display: grid;
+  grid-template-columns: 60.45% 39.55%;
+  width: 100%;
+  height: 100%;
+  background: var(--w-light-bg);
+}
+.slide-text .text-left {
+  padding: 84px 70px 56px 110px;
+  color: var(--w-navy);
+  overflow: hidden;
+}
+.slide-text .text-left h2 {
+  margin: 0 0 0.6em;
+  font-size: 2em;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--w-navy);
+}
+.slide-text .text-left p {
+  font-family: var(--font-body);
+  margin: 0;
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: #1a195f;
+}
+.slide-text .text-left p + p {
+  margin-top: 0.8em;
+}
+.slide-text .text-left strong {
+  font-weight: 700;
+  color: var(--w-navy);
+}
+
+/* Decorative art panel */
+.slide-text .text-art {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(30% 34% at 9% 22%, rgba(163,234,27,0.92), transparent 62%),
+    radial-gradient(52% 38% at 78% 18%, rgba(82,218,224,0.52), transparent 58%),
+    radial-gradient(34% 30% at 84% 52%, rgba(55,202,218,0.46), transparent 60%),
+    linear-gradient(140deg, #0f6e72 0%, #1f5aa8 32%, #30c6cc 70%, #74d9e1 100%);
+}
+.slide-text .text-art-inner {
+  position: absolute;
+  inset: 0;
+}
+.slide-text .art-blob,
+.slide-text .art-shape {
+  position: absolute;
+  filter: saturate(1.05);
+}
+.slide-text .art-blob.b1 {
+  width: 58%; height: 46%;
+  left: -10%; top: 8%;
+  border-radius: 48% 52% 40% 60% / 44% 45% 55% 56%;
+  background: radial-gradient(circle at 40% 40%, #a6e829 0%, #8dd91f 55%, rgba(141,217,31,0.4) 78%, transparent 100%);
+  filter: blur(1px);
+}
+.slide-text .art-blob.b2 {
+  width: 74%; height: 58%;
+  right: -6%; bottom: -2%;
+  border-radius: 44% 56% 46% 54% / 38% 50% 50% 62%;
+  background: radial-gradient(circle at 42% 36%, #9ae126 0%, #8adb20 54%, #7dd71b 74%, rgba(125,215,27,0.15) 100%);
+  filter: blur(5px);
+}
+.slide-text .art-shape.s1 {
+  width: 45%; height: 16%;
+  top: -1%; left: 18%;
+  border-radius: 50% / 58%;
+  background: repeating-linear-gradient(6deg, rgba(34,177,176,0.95) 0 3px, rgba(20,127,136,0.92) 3px 6px, rgba(53,196,194,0.92) 6px 9px);
+  transform: rotate(7deg);
+  opacity: 0.95;
+}
+.slide-text .art-shape.s2 {
+  width: 28%; height: 24%;
+  top: 28%; left: 12%;
+  border-radius: 48% 52% 44% 56% / 42% 54% 46% 58%;
+  background: radial-gradient(circle at 42% 46%, #2c8c1c 0%, #2e7d22 38%, #2b6f30 62%, #4ca74a 100%);
+}
+.slide-text .art-shape.s3 {
+  width: 36%; height: 18%;
+  right: -4%; top: 14%;
+  border-radius: 42% 58% 47% 53% / 52% 52% 48% 48%;
+  background: radial-gradient(circle at 35% 40%, rgba(125,234,232,0.94) 0%, rgba(84,217,222,0.92) 40%, rgba(52,192,198,0.86) 72%, rgba(52,192,198,0.28) 100%);
+}
+.slide-text .art-shape.s4 {
+  width: 40%; height: 24%;
+  right: -8%; top: 34%;
+  border-radius: 47% 53% 38% 62% / 40% 56% 44% 60%;
+  background: radial-gradient(circle at 30% 35%, rgba(100,231,228,0.88) 0%, rgba(64,207,212,0.85) 52%, rgba(56,193,205,0.72) 80%, rgba(56,193,205,0.12) 100%);
+  transform: rotate(-18deg);
+}
+.slide-text .art-ring {
+  position: absolute;
+  width: 26%; height: 26%;
+  left: 26%; top: 20%;
+  border-radius: 50%;
+  border: 8px solid rgba(230,250,130,0.55);
+  box-shadow: 0 0 18px rgba(232,255,173,0.22);
+  opacity: 0.62;
+}
+.slide-text .art-noodle {
+  position: absolute;
+  width: 52%; height: 20%;
+  left: 44%; top: 2%;
+  border-radius: 50% / 65%;
+  background: repeating-linear-gradient(4deg, rgba(52,201,197,0.90) 0 3px, rgba(15,139,145,0.92) 3px 6px, rgba(42,190,189,0.86) 6px 9px);
+  transform: rotate(6deg);
+  opacity: 0.85;
+}
+
+/* ── Table slide (ref: page-72) ───────────────────────────── */
+.slide-table {
+  padding: 0;
+  flex-direction: column;
+  background: #dfe1e7;
+  color: var(--w-navy);
+}
+/* Hide the default W watermark — topbar has its own context */
+.slide-table::after {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2248%22%20height%3D%2230%22%20fill%3D%22none%22%20viewBox%3D%220%200%2048%2030%22%3E%3Cpath%20fill%3D%22%2361bd73%22%20d%3D%22M46%204.97%2038.04.41a3%203%200%200%200-3.01%200%202.9%202.9%200%200%200-1.51%202.57v9.82l-4.14-2.36a10.9%2010.9%200%200%200-10.79.01l-4.1%202.35V2.98A3.02%203.02%200%200%200%209.96.41L2%204.97C.77%205.68%200%207%200%208.4v10.84a5.4%205.4%200%200%200%202.55%204.59l7.25%204.56a6.46%206.46%200%200%200%207.25-.28l5.04-3.76a3.4%203.4%200%200%201%203.82%200l5.03%203.75a6.5%206.5%200%200%200%207.26.29l7.25-4.57A5.4%205.4%200%200%200%2048%2019.33V8.4c0-1.4-.76-2.72-2-3.42m-32.85%2022.4a4.3%204.3%200%200%201-2.24-.64l-7.27-4.58a3.4%203.4%200%200%201-1.62-2.9V8.4c0-.7.38-1.35%201-1.7l7.95-4.56a1%201%200%200%201%201%200c.15.08.5.33.5.85v22.5q0%201.07.68%201.89m3.02-1.1-.03.02a1.03%201.03%200%200%201-1.65-.81v-3.32l6.27-3.95a6.1%206.1%200%200%201%206.5%200l6.27%203.95v3.32c0%20.63-.53%201.01-1.03%201.01-.22%200-.47-.08-.65-.22l-4.72-3.51a5.5%205.5%200%200%200-6.25%200zm12.19-9.74a8.2%208.2%200%200%200-8.7%200l-5.18%203.27v-4.7l5.12-2.92.02-.01a8.9%208.9%200%200%201%208.75%200l5.15%202.92v4.7zm15.74%205.78-6.99%204.4q-1.02.64-2.24.66c.44-.53.68-1.19.68-1.89l-.02-10.96V2.98c0-.5.35-.76.5-.85a1%201%200%200%201%201%200l7.95%204.57c.61.35%201%201%201%201.7v10.87a3.4%203.4%200%200%201-1.62%202.87z%22%2F%3E%3C%2Fsvg%3E");
+}
+.slide-table .table-topbar {
+  height: 84px;
+  background: var(--w-navy);
+  display: flex;
+  align-items: center;
+  padding: 0 84px;
+  flex-shrink: 0;
+}
+.slide-table .table-topbar h2 {
+  font-family: var(--font-heading);
+  font-size: 1.4em;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: #fff;
+  margin: 0;
+}
+.slide-table .table-body {
+  flex: 1;
+  overflow: hidden;
+}
+.slide-table table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin: 0;
+  border-radius: 0;
+  font-size: 0.55em;
+}
+.slide-table thead th {
+  background: #d4d6de;
+  color: var(--w-navy);
+  font-family: var(--font-heading);
+  font-size: 1.4em;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  padding: 28px 24px 20px;
+  height: 71px;
+  border-right: 2px solid #c9ccd3;
+  border-bottom: none;
+  border-left: none;
+  text-align: center;
+}
+.slide-table thead th:first-child {
+  text-align: left;
+  padding-left: 84px;
+}
+.slide-table thead th:last-child {
+  border-right: none;
+}
+.slide-table tbody tr:nth-child(odd) td { background: #dfe1e7; }
+.slide-table tbody tr:nth-child(even) td { background: #d4d6de; }
+.slide-table tbody td {
+  border-right: 2px solid #c9ccd3;
+  border-bottom: 1px solid rgba(201,204,211,0.38);
+  color: var(--w-navy);
+  vertical-align: middle;
+  padding: 18px 22px;
+  font-family: var(--font-body);
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+}
+.slide-table tbody td:first-child {
+  padding-left: 84px;
+  text-align: left;
+}
+.slide-table tbody td:not(:first-child) {
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.slide-table tbody td:last-child {
+  border-right: none;
+}
+.slide-table .table-check,
+.slide-table .table-cross {
+  font-size: 1.8em;
+  font-weight: 700;
+  line-height: 1;
+}
+.slide-table .table-check { color: var(--w-navy); }
+.slide-table .table-cross { color: var(--w-navy); }
+
+/* ── Split text + bullets slide (ref: page-44) ───────────── */
+.slide-split-text-bullets {
+  padding: 70px 88px 60px 88px;
+  background:
+    radial-gradient(34% 48% at 10% 84%, rgba(105,221,191,0.70), transparent 58%),
+    radial-gradient(44% 54% at 24% 72%, rgba(138,222,202,0.52), transparent 62%),
+    radial-gradient(30% 42% at 7% 28%, rgba(145,214,240,0.38), transparent 58%),
+    radial-gradient(36% 48% at 30% 88%, rgba(116,215,234,0.20), transparent 66%),
+    linear-gradient(180deg, #edf1f5, #edf1f5);
+  color: var(--w-navy);
+}
+.slide-split-text-bullets::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(30% 40% at 12% 84%, rgba(97,189,115,0.38), transparent 56%),
+    radial-gradient(42% 54% at 20% 72%, rgba(122,199,192,0.26), transparent 60%),
+    radial-gradient(18% 24% at 6% 30%, rgba(122,214,235,0.22), transparent 56%);
+  filter: blur(42px);
+  pointer-events: none;
+}
+.slide-split-text-bullets h2 {
+  position: relative;
+  z-index: 1;
+  font-size: 2.6em;
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+  color: var(--w-navy);
+  margin-bottom: 0.6em;
+}
+.slide-split-text-bullets .stb-cols {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 44% 48%;
+  justify-content: space-between;
+  align-items: start;
+  flex: 1;
+  margin-top: 0.4em;
+}
+.slide-split-text-bullets .stb-copy {
+  font-family: var(--font-heading);
+  font-size: 1.15em;
+  font-weight: 400;
+  line-height: 1.18;
+  letter-spacing: -0.04em;
+  color: var(--w-navy);
+}
+.slide-split-text-bullets .stb-bullets {
+  margin: 0;
+  padding-left: 0.9em;
+  list-style-type: disc;
+}
+.slide-split-text-bullets .stb-bullets li {
+  margin: 0 0 0.45em 0;
+  padding-left: 0.25em;
+  font-family: var(--font-body);
+  font-size: 0.85em;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: var(--w-navy);
+}
+.slide-split-text-bullets .stb-bullets li::marker {
+  font-size: 1.2em;
+  color: var(--w-navy);
+}
+.slide-split-text-bullets .stb-bullets strong {
+  font-weight: 700;
+  color: var(--w-navy);
+}
+
+/* ── Print mode (all slides stacked for PDF export) ───────── */
+body.print-mode {
+  overflow: auto;
+  background: #fff;
+}
+body.print-mode #viewport {
+  position: relative;
+  transform: none !important;
+  width: 1920px;
+  height: auto;
+}
+body.print-mode .slide {
+  position: relative;
+  display: flex !important;
+  page-break-after: always;
+  break-after: page;
+}
+body.print-mode .slide-counter,
+body.print-mode .progress-bar {
+  display: none;
+}
+body.print-mode .fragment {
+  opacity: 1;
+}
